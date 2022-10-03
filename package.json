@@ -1,0 +1,19 @@
+{
+  "name": "rehype-base64-image-swapper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {},
+  "keywords": [
+    "rehype",
+    "base64",
+    "rte",
+    "image"
+  ],
+  "author": "devlulcas",
+  "license": "MIT",
+  "dependencies": {
+    "hast-util-is-element": "^2.1.2",
+    "unist-util-visit": "^4.1.1"
+  }
+}
