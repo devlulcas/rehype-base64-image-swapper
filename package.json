@@ -1,19 +1,32 @@
 {
-  "name": "rehype-base64-image-swapper",
-  "version": "1.0.0",
+  "name": "@devlulcas/rehype-base64-image-swapper",
+  "version": "1.0.1",
+  "description": "Extracts the base64 image source and pass it to a handler function",
   "main": "index.js",
-  "type": "module",
-  "scripts": {},
-  "keywords": [
-    "rehype",
-    "base64",
-    "rte",
-    "image"
-  ],
-  "author": "devlulcas",
-  "license": "MIT",
   "dependencies": {
     "hast-util-is-element": "^2.1.2",
     "unist-util-visit": "^4.1.1"
-  }
+  },
+  "devDependencies": {
+    "typescript": "^4.8.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devlulcas/rehype-base64-image-swapper.git"
+  },
+  "keywords": [
+    "rehype",
+    "base64",
+    "image",
+    "rte"
+  ],
+  "author": "devlulcas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/devlulcas/rehype-base64-image-swapper/issues"
+  },
+  "homepage": "https://github.com/devlulcas/rehype-base64-image-swapper#readme"
 }

@@ -2,11 +2,15 @@ lockfileVersion: 5.4
 
 specifiers:
   hast-util-is-element: ^2.1.2
+  typescript: ^4.8.4
   unist-util-visit: ^4.1.1
 
 dependencies:
   hast-util-is-element: 2.1.2
   unist-util-visit: 4.1.1
+
+devDependencies:
+  typescript: 4.8.4
 
 packages:
 
@@ -26,6 +30,12 @@ packages:
       '@types/hast': 2.3.4
       '@types/unist': 2.0.6
     dev: false
+
+  /typescript/4.8.4:
+    resolution: {integrity: sha512-QCh+85mCy+h0IGff8r5XWzOVSbBO+KfeYrMQh7NJ58QujwcE22u+NUSmUxqF+un70P9GXKxa2HCNiTTMJknyjQ==}
+    engines: {node: '>=4.2.0'}
+    hasBin: true
+    dev: true
 
   /unist-util-is/5.1.1:
     resolution: {integrity: sha512-F5CZ68eYzuSvJjGhCLPL3cYx45IxkqXSetCcRgUXtbcm50X2L9oOWQlfUfDdAf+6Pd27YDblBfdtmsThXmwpbQ==}
