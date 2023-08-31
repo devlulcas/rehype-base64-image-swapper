@@ -1,6 +1,6 @@
 {
   "name": "rehype-base64-image-swapper",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Asynchronously extract and replace base64 image with strings",
   "main": "index.js",
   "type": "module",
