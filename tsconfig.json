@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "exactOptionalPropertyTypes": true,
+    "lib": ["ES2022"],
+    "module": "node16",
+    "strict": true,
+    "target": "es2022"
+  },
+  "exclude": ["coverage/", "node_modules/"],
+  "include": ["**/*.js"]
+}

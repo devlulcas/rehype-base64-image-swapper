@@ -1,54 +1,87 @@
-import { visit } from "unist-util-visit";
-import { isElement } from "hast-util-is-element";
+/**
+ * TODO: Optimize this plugin by caching the images in a Map.
+ */
 
-export default function rehypeBase64ImageExtractor({ handler }) {
+import { visit } from 'unist-util-visit';
+
+/**
+ * @typedef {import('hast').Root} Root
+ * @typedef {import('hast').Element} Element
+ */
+
+/**
+ * Plugin to extract base64-encoded images from HTML. This is useful for e.g.
+ * - uploading them to a CDN
+ * - replacing them with a placeholder
+ * - etc.
+ *
+ * @param {{src: (encodedImage: string) => Promise<string>}} [options]
+ */
+export default function rehypeBase64ImageSwapper(options) {
+  if (typeof options === 'undefined') {
+    throw new Error(
+      'Error at rehype-base64-image-swapper: options is required! it should be an object with a src function and a mode string'
+    );
+  }
+
+  if (typeof options.src !== 'function') {
+    throw new Error(
+      'Error at rehype-base64-image-swapper: options.src is required! it should be an async function that returns a string (the new src)'
+    );
+  }
+
+  /**
+   * @param {Root} tree
+   */
   return async (tree) => {
-    await visit(tree, "element", async (node, index, parent) => {
-      // Ignore everything that is not an image
-      if (
-        typeof index !== "number" ||
-        !isElement(node, "img") ||
-        !node.properties ||
-        !node.properties.src
-      ) {
-        return;
+    /** @type {Map<string, Map<string, number>>} */
+
+    /**
+     * List of images to extract.
+     * @type {Promise<string>[]}
+     */
+    const promises = [];
+
+    visit(tree, 'element', (node) => {
+      if (!isBase64EncodedImageNode(node)) return;
+
+      // Push the promise to the list of promises so we can await them later
+      promises.push(options.src(node.properties.src));
+    });
+
+    // Await all promises
+    const awaitedPromises = await Promise.allSettled(promises);
+
+    visit(tree, 'element', (node) => {
+      if (!isBase64EncodedImageNode(node)) return;
+
+      // Get the new src from the array
+      const newSrc = awaitedPromises.shift();
+
+      if (!newSrc) {
+        throw new Error(
+          'Error at rehype-base64-image-swapper: how did this image get here? \n' +
+            node.properties.src
+        );
       }
 
-      const src = String(node.properties.src);
-
-      const findBase64 = /data:([^"]+)*/gm;
-
-      const isBase64 = src?.match(findBase64);
-
-      if (isBase64 === null) return;
-
-      const findBase64Mimetype = /data:(.*);base64/gi;
-
-      // Ex: data:image/png;base64
-      const mimetypeWithWrapper = src?.match(findBase64Mimetype)[0];
-
-      // Ex: image/png
-      const mimetype = mimetypeWithWrapper
-        ?.replace("data:", "")
-        ?.replace(";base64", "");
-
-      // The handler method should return an url for the image
-      const url = await handler({
-        mimetype: mimetype,
-        content: src,
-      });
-
-      // Changes the original img src
-      const replacement = {
-        ...node,
-        properties: {
-          ...node.properties,
-          src: url,
-        },
-      };
-
-      // replace the original img
-      parent.children[index] = replacement;
+      // Set the new src or keep the old one
+      if (newSrc.status === 'fulfilled') {
+        node.properties.src = newSrc.value;
+      }
     });
   };
+}
+
+/**
+ * Type guard to check if a node has a base64-encoded image as its src.
+ * @param {Element} node
+ * @returns {node is Element & { properties: { src: string } }}
+ */
+function isBase64EncodedImageNode(node) {
+  if (node.tagName !== 'img') return false;
+  if (!node.properties.src) return false;
+  if (typeof node.properties.src !== 'string') return false;
+  if (!node.properties.src.startsWith('data:')) return false;
+  return true;
 }
