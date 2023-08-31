@@ -42,8 +42,15 @@ export default function rehypeBase64ImageSwapper(options) {
      */
     const promises = [];
 
+    /**
+     * Cache of images that have already been extracted.
+     * @type {Map<string, string>}
+     * */
+    const cache = new Map();
+
     visit(tree, 'element', (node) => {
       if (!isBase64EncodedImageNode(node)) return;
+      if (cache.has(node.properties.src)) return;
 
       // Push the promise to the list of promises so we can await them later
       promises.push(options.src(node.properties.src));
@@ -54,6 +61,14 @@ export default function rehypeBase64ImageSwapper(options) {
 
     visit(tree, 'element', (node) => {
       if (!isBase64EncodedImageNode(node)) return;
+
+      // If the image has already been extracted, set the new src and return
+      const inCache = cache.get(node.properties.src);
+
+      if (inCache) {
+        node.properties.src = inCache;
+        return;
+      }
 
       // Get the new src from the array
       const newSrc = awaitedPromises.shift();
@@ -67,6 +82,7 @@ export default function rehypeBase64ImageSwapper(options) {
 
       // Set the new src or keep the old one
       if (newSrc.status === 'fulfilled') {
+        cache.set(node.properties.src, newSrc.value);
         node.properties.src = newSrc.value;
       }
     });
