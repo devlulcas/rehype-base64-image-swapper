@@ -11,14 +11,14 @@ The plugin will also extract the base64 encoded images, so you can upload them t
 ## Installation
 
 ```bash
-npm install @devlulcas/rehype-base64-image-swapper
+npm install rehype-base64-image-swapper
 ```
 
 ### Usage
 
 ```js
 import { rehype } from 'rehype';
-import rehypeBase64ImageSwapper from '@devlulcas/rehype-base64-image-swapper';
+import rehypeBase64ImageSwapper from 'rehype-base64-image-swapper';
 
 const html = `
 <div>
